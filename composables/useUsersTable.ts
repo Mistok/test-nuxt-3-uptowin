@@ -119,21 +119,29 @@ export function useUsersTable(users: User[]) {
   // Debounced update for search
   const debouncedUpdateQueryParams = debounce(updateQueryParams, 500)
 
-  // Reset page to 1 when filters, sorting, or page size change
+  // Reset page to 1 when filters, sorting, or page size change (but not during initialization)
+  const initializingFromQuery = ref(true)
+
   watch(
     [search, role, sortBy, sortDirection, perPage],
     () => {
-      if (page.value !== 1) {
+      if (!initializingFromQuery.value && page.value !== 1) {
         page.value = 1
       }
     }
   )
 
-  // Update query params when filter/sort/pagination state changes
+  // Update query params immediately for pagination, debounced for search
   watch(
     [search, role, sortBy, sortDirection, page, perPage],
-    () => {
-      debouncedUpdateQueryParams()
+    ([newSearch], [oldSearch]) => {
+      if (newSearch !== oldSearch) {
+        // Search changed - use debounce
+        debouncedUpdateQueryParams()
+      } else {
+        // Other params changed - update immediately
+        updateQueryParams()
+      }
     },
     { deep: true }
   )
@@ -144,8 +152,9 @@ export function useUsersTable(users: User[]) {
     if (typeof route.query.role === 'string') role.value = route.query.role
     if (typeof route.query.sortBy === 'string') sortBy.value = route.query.sortBy
     if (typeof route.query.sortDirection === 'string') sortDirection.value = route.query.sortDirection
-    if (typeof route.query.page === 'string') page.value = parseInt(route.query.page)
     if (typeof route.query.perPage === 'string') perPage.value = parseInt(route.query.perPage)
+    if (typeof route.query.page === 'string') page.value = parseInt(route.query.page)
+    initializingFromQuery.value = false
   })
 
   return {

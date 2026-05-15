@@ -7,13 +7,16 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "deploy": "npm run generate && npx gh-pages -d .output/public",
+    "postgenerate": "node -e \"require('fs').writeFileSync('.output/public/.nojekyll', '')\"",
+    "deploy": "npm run generate && npx gh-pages -d .output/public --dotfiles",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@oxc-transform/binding-win32-x64-msvc": "^0.128.0",
     "@pinia/nuxt": "^0.11.3",
     "nuxt": "^4.2.2",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.5",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
   },

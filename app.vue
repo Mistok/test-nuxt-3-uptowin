@@ -1,9 +1,20 @@
 <template>
-  <div>
-    <ThemeSwitcher />
+  <div class="container">
+    <ThemeSwitcher class="themeSwitcher"/>
     <NuxtPage />
   </div>
 </template>
+
+<style scoped>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.themeSwitcher {
+  margin-bottom: 16px;
+}
+</style>
 
 <script setup>
 import { useGeneralStore } from '~/stores/general'
